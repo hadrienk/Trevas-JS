@@ -10,6 +10,7 @@
     "author": "INSEE (http://www.insee.fr)",
     "scripts": {
         "build": "tsc",
+        "dev": "yarn wasm && vite",
         "test": "vitest",
         "test-coverage": "vitest run --coverage",
         "storybook": "storybook dev",
@@ -18,7 +19,8 @@
         "lint": "npm run lint:check -- --fix",
         "_format": "prettier '**/*.{js,ts,json,md}'",
         "format": "npm run _format -- --write",
-        "format:check": "npm run _format -- --list-different"
+        "format:check": "npm run _format -- --list-different",
+        "wasm": "wasm-pack build ./trevas-wasm --target web"
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -95,6 +97,7 @@
         "storybook-dark-mode": "^4.0.2",
         "typescript": "^4.9.5",
         "vite-tsconfig-paths": "^4.3.2",
+        "vite-plugin-wasm-pack": "https://github.com/invideoio/vite-plugin-wasm-pack",
         "vitest": "^2.0.4"
     },
     "publishConfig": {
