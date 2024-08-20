@@ -4,7 +4,9 @@ import * as Wasm from "./wasm";
 
 export const getDatasetImplementations = (bindings: Bindings): DatasetImplementations => {
     const mode = bindings["$vtl.engine.processing_engine_names"];
-    if (mode === "wasm") return Wasm;
+    if (mode === "wasm") {
+        return Wasm;
+    }
     return InMemory;
 };
 

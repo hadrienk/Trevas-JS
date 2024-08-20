@@ -7,7 +7,69 @@
         <title>Vite App</title>
     </head>
     <body>
-        <div id="app"></div>
-        <script type="module" src="/src/index.ts"></script>
+        <!-- user interface to quickly test the interpretor -->
+        <div id="trevas-ui">
+            <textarea id="code-input" placeholder="Type your code here"></textarea>
+            <textarea id="dataset-input" placeholder="Type your dataset here"></textarea>
+            <label for="use-wasm">Use WebAssembly</label>
+            <input type="checkbox" id="use-wasm" />
+            <button id="run-button">Run</button>
+            <div id="trevas-output"></div>
+        </div>
+        <div id="test-code">
+            <button id="test-code-replace">replace</button>
+            <button id="test-code-sum">sum</button>
+        </div>
+        <!-- <script type="module" src="/src/index.ts"></script> -->
+        <script type="module">
+            import { interpret } from "./src/index.ts";
+            import { VtlParser } from "@making-sense/vtl-2-0-antlr-tools-ts";
+            const codeInput = document.getElementById("code-input");
+            const datasetInput = document.getElementById("dataset-input");
+            const useWasm = document.getElementById("use-wasm");
+            const runButton = document.getElementById("run-button");
+            const trevasOutput = document.getElementById("trevas-output");
+
+            const testCodeReplace = {
+                code: 'replace("hello world", "world", "papa")',
+                dataset: {}
+            };
+            const testCodeReplaceButton = document.getElementById("test-code-replace");
+            testCodeReplaceButton.addEventListener("click", () => {
+                codeInput.value = testCodeReplace.code;
+            });
+
+            const testCodeSum = {
+                code: "sum(ds)",
+                dataset: {
+                    ds: {
+                        dataStructure: [
+                            { name: "id1", type: VtlParser.INTEGER, role: VtlParser.IDENTIFIER },
+                            { name: "col1", type: VtlParser.INTEGER, role: VtlParser.MEASURE }
+                        ],
+                        dataPoints: [
+                            [1, 10],
+                            [1, 20],
+                            [2, 30]
+                        ]
+                    }
+                }
+            };
+            const testCodeSumButton = document.getElementById("test-code-sum");
+            testCodeSumButton.addEventListener("click", () => {
+                codeInput.value = testCodeSum.code;
+                datasetInput.value = JSON.stringify(testCodeSum.dataset);
+            });
+
+            runButton.addEventListener("click", () => {
+                const code = codeInput.value;
+                const dataset = JSON.parse(datasetInput.value);
+                const bindings = useWasm.checked
+                    ? { ...dataset, "$vtl.engine.processing_engine_names": "wasm" }
+                    : dataset;
+                const output = interpret(code, bindings);
+                trevasOutput.innerHTML = JSON.stringify(output);
+            });
+        </script>
     </body>
 </html>
